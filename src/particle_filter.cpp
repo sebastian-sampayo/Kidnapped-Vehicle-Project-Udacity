@@ -24,7 +24,37 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	//   x, y, theta and their uncertainties from GPS) and all weights to 1. 
 	// Add random Gaussian noise to each particle.
 	// NOTE: Consult particle_filter.h for more information about this method (and others in this file).
+  
+  // TODO: research how many particle should we use
+  num_particles = 100; // ??
+  
+  // Random distribution initialization
+  default_random_engine gen;
+  
+  const double std_x = std[0];
+  const double std_y = std[1];
+  const double std_theta = std[2];
+  normal_distribution<double> dist_x(x, std_x);
+  normal_distribution<double> dist_y(y, std_y);
+  normal_distribution<double> dist_theta(theta, std_theta);
+  
+  // Initialization for each particle
+  for (int i = 0; i < num_particles; ++i)
+  {
+    double weight = 1;
+    
+    weights.push_back(weight);
+    
+    Particle particle;
+    particle.x = dist_x(gen);
+    particle.y = dist_y(gen);
+    particle.theta = dist_theta(gen);
+    particle.weight = weight;
+    
+    particles.push_back(particle);
+  }
 
+  is_initialized = true;
 }
 
 void ParticleFilter::prediction(double delta_t, double std_pos[], double velocity, double yaw_rate) {
@@ -33,6 +63,46 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	//  http://en.cppreference.com/w/cpp/numeric/random/normal_distribution
 	//  http://www.cplusplus.com/reference/random/default_random_engine/
 
+  // Random distribution initialization
+  default_random_engine gen;
+  
+  const double std_x = std_pos[0];
+  const double std_y = std_pos[1];
+  const double std_theta = std_pos[2];
+  
+  normal_distribution<double> dist_x(0, std_x);
+  normal_distribution<double> dist_y(0, std_y);
+  normal_distribution<double> dist_theta(0, std_theta);
+  
+  // Prediction for each particle
+  for (int i = 0; i < num_particles; ++i)
+  {
+    // cout << "particle[" << i << "] = " << particles[i].x << endl;
+    Particle &particle = particles[i];
+    double prev_x = particle.x;
+    double prev_y = particle.y;
+    double prev_theta = particle.theta;
+    
+    // Motion model
+    if (yaw_rate > 0.001)
+    {
+      particle.x += velocity/yaw_rate * (sin(prev_theta + yaw_rate*delta_t) - sin(prev_theta));
+      particle.y += velocity/yaw_rate * (cos(prev_theta) - cos(prev_theta + yaw_rate*delta_t));
+      particle.theta += prev_theta * delta_t;
+    }
+    else
+    {
+      particle.x += velocity * delta_t * cos(prev_theta);
+      particle.y += velocity * delta_t * sin(prev_theta);
+      particle.theta += prev_theta;
+    }
+    
+    // Add noise
+    particle.x += dist_x(gen);
+    particle.y += dist_y(gen);
+    particle.theta += dist_theta(gen);
+    // cout << "particle[" << i << "] = " << particles[i].x << endl;
+  }
 }
 
 void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations) {
