@@ -5,7 +5,7 @@
  *      Author: Tiffany Huang
  *  
  *  Completed on: May 27, 2017
- *      Author: Sebastián Sampayo
+ *      Author: Sebastián Lucas Sampayo
  */
 
 #include <random>
