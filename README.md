@@ -113,7 +113,7 @@ root
     |   particle_filter.h
 ```
 
-The only files that I modified for this project are `particle_filter.cpp` and the header file `particle_filter.h` in the `src` directory. These files contain the `ParticleFilter` class and some associated methods.
+The only file that I modified for this project is `particle_filter.cpp` in the `src` directory. This file contain the `ParticleFilter` class and some associated methods.
 
 
 ## Inputs to the Particle Filter
