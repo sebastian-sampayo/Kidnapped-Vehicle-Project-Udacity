@@ -240,7 +240,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
         predictions.push_back(prediction);
       }
     }
-    
+
     // Convert observations from vehicle to global coordinates
     // Create a copy of the observations that will be converted to global coordinates
     std::vector<LandmarkObs> observations_global(observations.size());
