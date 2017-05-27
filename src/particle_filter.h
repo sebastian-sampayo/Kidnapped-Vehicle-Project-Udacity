@@ -86,6 +86,7 @@ public:
 	 * @param sensor_range Range [m] of sensor
 	 * @param std_landmark[] Array of dimension 2 [standard deviation of range [m],
 	 *   standard deviation of bearing [rad]]
+	 *      ??? NO! See line 37 main.cpp: Landmark measurement uncertainty [x [m], y [m]] !!!
 	 * @param observations Vector of landmark observations
 	 * @param map Map class containing map landmarks
 	 */
@@ -114,6 +115,44 @@ public:
 	const bool initialized() const {
 		return is_initialized;
 	}
+  
+  /**
+   *  Normalize an angle between [-pi, +pi]
+   */
+  void normalizeAngle(double& angle);
+  
+  /**
+   *  Transform landmark observations from vehicle coordinates to global coordinates.
+   *  @param observations Vector of landmark observations
+   *  @param particle Particle object containing the state vector
+   */
+  void transformObservations(std::vector<LandmarkObs>& observations, Particle particle);
+  
+  /**
+   *  Transform landmark observations from vehicle coordinates to global coordinates.
+   *  @param[in] x Point X coordinate in vehicle system.
+   *  @param particle Particle object containing the state vector
+   */
+  void transformPoint(double& x_g, double& y_g, const double x_v, const double y_v, Particle particle);
+
+  /**
+   *  Calculate gaussian pdf in point x
+   *  @param x Point to calculate pdf
+   *  @param mean Mean of the Gaussian distribution
+   *  @param std Standard deviation of the Gaussian distribution
+   */
+   double gaussianPdf(double x, double mean, double std);
+  
+  /**
+   *  Debug: Print all particles
+   */
+  void printParticles();
+  
+  /**
+   *  Debug: Print a vector of landmarks
+   */
+  void printLandmarks(std::vector<LandmarkObs> landmarks, const char* title);
+  void printLandmarks(Map map);
 };
 
 
