@@ -19,7 +19,7 @@
 #include "map.h"
 #include "particle_filter.h"
 
-#define DEBUG
+// #define DEBUG
 
 using namespace std;
 
@@ -34,8 +34,14 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 #endif
 
   // TODO: research how many particle should we use
-  num_particles = 5; // ??
-  
+  // Less than 100 particles gives worst errors: not enough sampling
+  // More than 1000 particles gives worst errors too: probably a performance issue, taking too long to run the algorithm.
+  // I have found that 100 particles is enough to get the best errors and performance
+  num_particles = 100;
+
+  // Clear ParticleFilter weights
+  weights.clear();
+
   // Random distribution initialization
   default_random_engine gen;
   
@@ -107,14 +113,15 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
     {
       particle.x += velocity/yaw_rate * (sin(prev_theta + yaw_rate*delta_t) - sin(prev_theta));
       particle.y += velocity/yaw_rate * (cos(prev_theta) - cos(prev_theta + yaw_rate*delta_t));
-      particle.theta += prev_theta * delta_t;
+      particle.theta += yaw_rate * delta_t;
     }
     else
     {
       // Division by zero guard
+      cout << "insiginificative yaw_rate: " << yaw_rate << endl;
       particle.x += velocity * delta_t * cos(prev_theta);
       particle.y += velocity * delta_t * sin(prev_theta);
-      particle.theta += prev_theta;
+      particle.theta = prev_theta;
     }
     
     // Add noise
@@ -123,8 +130,9 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
     particle.theta += dist_theta(gen);
     
     // Normalization
-    normalizeAngle(particle.theta);
-    // cout << "particle[" << i << "] = " << particles[i].x << endl;
+    // The simulator is probably expecting [0, 2pi] instead of [-pi, pi], so don't normalize
+    // normalizeAngle(particle.theta);
+    // cout << "particle.theta: " << particle.theta << endl;
     // i++;
   }
   
@@ -211,15 +219,21 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
       endl;
 #endif
     // Fill a vector of predicted distances to landmarks for this particle:
-    // TODO: consider only particles within the sensor_range
     vector<LandmarkObs> predictions;
     for (auto& landmark : map_landmarks.landmark_list)
     {
-      LandmarkObs prediction;
-      prediction.id = landmark.id_i;
-      prediction.x = landmark.x_f;// - particle.x;
-      prediction.y = landmark.y_f;// - particle.y;
-      predictions.push_back(prediction);
+      const double lx = landmark.x_f;
+      const double ly = landmark.y_f;
+      const double distance = dist(lx, ly, particle.x, particle.y);
+      
+      if (distance <= sensor_range)
+      {
+        LandmarkObs prediction;
+        prediction.id = landmark.id_i;
+        prediction.x = lx;// - particle.x;
+        prediction.y = ly;// - particle.y;
+        predictions.push_back(prediction);
+      }
     }
     
     // Convert observations from vehicle to global coordinates
@@ -279,7 +293,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
   for (Particle& particle : particles)
   {
     particle.weight /= weight_acc;
-    weights.resize(0);
+    // weights.resize(0);
     weights.push_back(particle.weight);
   }
 
@@ -299,7 +313,7 @@ void ParticleFilter::resample() {
   //From Udacity Forum suggestions on resampling with discrete_distribution fx:
   std::random_device rd;
   std::mt19937 generator_wts(rd());
-  std::discrete_distribution<> d(weights.begin(), weights.end());
+  std::discrete_distribution<int> d(weights.begin(), weights.end());
   std::vector<Particle> resampledParticles(num_particles);
 
 #ifdef DEBUG
@@ -313,11 +327,11 @@ void ParticleFilter::resample() {
   for (int i=0; i < num_particles; i++) 
   {
     int idx = d(generator_wts);
-    cout << "i: " << i << " | idx: " << idx << endl;
+    // cout << "i: " << i << " | idx: " << idx << endl;
     Particle p = particles[idx];
     // resampledParticles.push_back(p);
     resampledParticles[i] = p;
-    cout << "resampledParticles.size() = "<< resampledParticles.size() << endl;
+    // cout << "resampledParticles.size() = "<< resampledParticles.size() << endl;
   }
   
 #ifdef DEBUG
@@ -455,8 +469,15 @@ void ParticleFilter::printParticles()
       " | x: " << particle.x << 
       " | y: " << particle.y << 
       " | theta: " << particle.theta << 
-      " | weight: " << particle.weight << 
+      " | p.weight: " << particle.weight << 
       endl;
+  }
+  
+  cout << "--- weights ---" << endl;
+  
+  for (double weight : weights)
+  {
+    cout << "weights[i]: " << weight << endl;
   }
 }
 
