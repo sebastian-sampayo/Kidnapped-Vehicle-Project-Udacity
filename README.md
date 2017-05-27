@@ -1,12 +1,12 @@
 # Kidnapped Vehicle Project
 
-In this project I implement a Particle Filter to localize an autonomous driving car.
+In this project I implemented a Particle Filter to localize an autonomous driving car.
 The code is written in C++, because this language provides great performance in terms of memory and speed.
 This work is part of the Self-Driving Car Engineer Nanodegree Program.
 
 ## Project Introduction
-"Your robot has been kidnapped and transported to a new location! Luckily it has a map of this location, a (noisy) GPS estimate of its initial location, and lots of (noisy) sensor and control data.
-In this project you will implement a 2 dimensional particle filter in C++. Your particle filter will be given a map and some initial localization information (analogous to what a GPS would provide). At each time step your filter will also get observation and control data."
+*Your robot has been kidnapped and transported to a new location! Luckily it has a map of this location, a (noisy) GPS estimate of its initial location, and lots of (noisy) sensor and control data.
+In this project you will implement a 2 dimensional particle filter in C++. Your particle filter will be given a map and some initial localization information (analogous to what a GPS would provide). At each time step your filter will also get observation and control data.*
 
 
 ---
@@ -17,13 +17,13 @@ In this project you will implement a 2 dimensional particle filter in C++. Your 
 
 ## Results
 
-### Simulator
-
-![Simulator][simulation]
-
 ### Video
 
 [A video of the results can be found in YouTube in this link.](https://youtu.be/MwPmdJab8Ek)
+
+### Simulator
+
+![Simulator][simulation]
 
 
 ## Running the Code
@@ -113,7 +113,7 @@ root
     |   particle_filter.h
 ```
 
-The only files that I modified for this project are `particle_filter.cpp` and the header file `particle_filter.h` in the `src` directory. The file contains the `ParticleFilter` class and some associated methods.
+The only files that I modified for this project are `particle_filter.cpp` and the header file `particle_filter.h` in the `src` directory. These files contain the `ParticleFilter` class and some associated methods.
 
 
 ## Inputs to the Particle Filter
