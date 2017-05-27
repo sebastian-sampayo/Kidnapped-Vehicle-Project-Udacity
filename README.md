@@ -8,8 +8,6 @@ This work is part of the Self-Driving Car Engineer Nanodegree Program.
 "Your robot has been kidnapped and transported to a new location! Luckily it has a map of this location, a (noisy) GPS estimate of its initial location, and lots of (noisy) sensor and control data.
 In this project you will implement a 2 dimensional particle filter in C++. Your particle filter will be given a map and some initial localization information (analogous to what a GPS would provide). At each time step your filter will also get observation and control data."
 
-https://youtu.be/MwPmdJab8Ek
-
 
 ---
 
@@ -18,9 +16,15 @@ https://youtu.be/MwPmdJab8Ek
 [axis]: ./img/axis.png
 
 ## Results
+
 ### Simulator
 
 ![Simulator][simulation]
+
+### Video
+
+[A video of the results can be found in YouTube in this link.](https://youtu.be/MwPmdJab8Ek)
+
 
 ## Running the Code
 This project involves the Term 2 Simulator which can be downloaded [here](https://github.com/udacity/self-driving-car-sim/releases)
