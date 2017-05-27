@@ -21,7 +21,7 @@
 
 // #define DEBUG
 /**
- *  My bugs:
+ *  My bugs before submission:
  *    - x error keeps increasing: Solution: use sensor_range to take into account only closest landmarks predictions.
  *    - yaw error dramatically increases when making a turn: Solution: remove the normalization, simulator is probably expecting theta in the range [0, 2pi]
  */
