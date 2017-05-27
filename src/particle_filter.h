@@ -115,44 +115,6 @@ public:
   const bool initialized() const {
     return is_initialized;
   }
-  
-  /**
-   *  Normalize an angle between [-pi, +pi]
-   */
-  void normalizeAngle(double& angle);
-  
-  /**
-   *  Transform landmark observations from vehicle coordinates to global coordinates.
-   *  @param observations Vector of landmark observations
-   *  @param particle Particle object containing the state vector
-   */
-  void transformObservations(std::vector<LandmarkObs>& observations, Particle particle);
-  
-  /**
-   *  Transform landmark observations from vehicle coordinates to global coordinates.
-   *  @param[in] x Point X coordinate in vehicle system.
-   *  @param particle Particle object containing the state vector
-   */
-  // void transformPoint(double& x_g, double& y_g, const double x_v, const double y_v, Particle particle);
-
-  /**
-   *  Calculate gaussian pdf in point x
-   *  @param x Point to calculate pdf
-   *  @param mean Mean of the Gaussian distribution
-   *  @param std Standard deviation of the Gaussian distribution
-   */
-   double gaussianPdf(double x, double mean, double std);
-  
-  /**
-   *  Debug: Print all particles
-   */
-  void printParticles();
-  
-  /**
-   *  Debug: Print a vector of landmarks
-   */
-  void printLandmarks(std::vector<LandmarkObs> landmarks, const char* title);
-  void printLandmarks(Map map);
 };
 
 

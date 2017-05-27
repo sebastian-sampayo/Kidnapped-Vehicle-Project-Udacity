@@ -35,6 +35,52 @@
 using namespace std;
 
 // ------------------------------------------------------------------------------------------------
+// -- Utility functions, prototypes
+// ------------------------------------------------------------------------------------------------
+
+/**
+ *  Normalize an angle between [-pi, +pi]
+ */
+void normalizeAngle(double& angle);
+
+/**
+ *  Transform landmark observations from vehicle coordinates to global coordinates.
+ *  @param observations Vector of landmark observations
+ *  @param particle Particle object containing the state vector
+ */
+void transformObservations(std::vector<LandmarkObs>& observations, Particle particle);
+
+/**
+ *  Transform landmark observations from vehicle coordinates to global coordinates.
+ *  @param[in] x Point X coordinate in vehicle system.
+ *  @param particle Particle object containing the state vector
+ */
+// void transformPoint(double& x_g, double& y_g, const double x_v, const double y_v, Particle particle);
+
+/**
+ *  Calculate gaussian pdf in point x
+ *  @param x Point to calculate pdf
+ *  @param mean Mean of the Gaussian distribution
+ *  @param std Standard deviation of the Gaussian distribution
+ */
+double gaussianPdf(double x, double mean, double std);
+
+/**
+ *  Debug: Print all particles
+ */
+void printParticles(vector<Particle> particles, vector<double> weights);
+
+/**
+ *  Debug: Print a vector of landmarks
+ */
+void printLandmarks(std::vector<LandmarkObs> landmarks, const char* title);
+void printLandmarks(Map map);
+
+// ------------------------------------------------------------------------------------------------
+// -- ParticleFilter methods
+// ------------------------------------------------------------------------------------------------
+
+// ------------------------------------------------------------------------------------------------
 void ParticleFilter::init(double x, double y, double theta, double std[]) {
   // Set the number of particles. Initialize all particles to first position (based on estimates of 
   //   x, y, theta and their uncertainties from GPS) and all weights to 1. 
@@ -86,7 +132,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
   is_initialized = true;
 
 #ifdef DEBUG
-  printParticles();
+  printParticles(particles, weights);
 #endif
 }
 
@@ -144,7 +190,7 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
   }
   
 #ifdef DEBUG
-  printParticles();
+  printParticles(particles, weights);
 #endif
 }
 
@@ -292,7 +338,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
   }
 
 #ifdef DEBUG
-  printParticles();
+  printParticles(particles, weights);
 #endif
 }
 
@@ -322,7 +368,7 @@ void ParticleFilter::resample() {
   particles = resampledParticles;
 
 #ifdef DEBUG
-  printParticles();
+  printParticles(particles, weights);
 #endif
 }
 
@@ -380,7 +426,11 @@ string ParticleFilter::getSenseY(Particle best)
 }
 
 // ------------------------------------------------------------------------------------------------
-void ParticleFilter::normalizeAngle(double& angle)
+// -- Utility functions, prototypes
+// ------------------------------------------------------------------------------------------------
+
+// ------------------------------------------------------------------------------------------------
+void normalizeAngle(double& angle)
 {
   //angle normalization
   while (angle >  M_PI) angle -= 2.*M_PI;
@@ -388,7 +438,7 @@ void ParticleFilter::normalizeAngle(double& angle)
 }
 
 // ------------------------------------------------------------------------------------------------
-void ParticleFilter::transformObservations(std::vector<LandmarkObs>& observations, Particle particle)
+void transformObservations(std::vector<LandmarkObs>& observations, Particle particle)
 {
   // The new observation is in vehicle coords, so we have to transform it to global coords:
 
@@ -427,7 +477,7 @@ void ParticleFilter::transformObservations(std::vector<LandmarkObs>& observation
 }
 
 // ------------------------------------------------------------------------------------------------
-double ParticleFilter::gaussianPdf(double x, double mean, double std)
+double gaussianPdf(double x, double mean, double std)
 {
   double normal_x_2 = (mean - x) * (mean - x);
   double std2 = std*std;
@@ -436,7 +486,7 @@ double ParticleFilter::gaussianPdf(double x, double mean, double std)
 }
 
 // ------------------------------------------------------------------------------------------------
-void ParticleFilter::printParticles()
+void printParticles(vector<Particle> particles, vector<double> weights)
 {
   for (Particle particle : particles)
   {
@@ -457,7 +507,7 @@ void ParticleFilter::printParticles()
 }
 
 // ------------------------------------------------------------------------------------------------
-void ParticleFilter::printLandmarks(std::vector<LandmarkObs> landmarks, const char* title)
+void printLandmarks(std::vector<LandmarkObs> landmarks, const char* title)
 {
   for (LandmarkObs landmark : landmarks)
   {
@@ -469,7 +519,7 @@ void ParticleFilter::printLandmarks(std::vector<LandmarkObs> landmarks, const ch
 }
 
 // ------------------------------------------------------------------------------------------------
-void ParticleFilter::printLandmarks(Map map)
+void printLandmarks(Map map)
 {
   for (auto& landmark : map.landmark_list)
   {
